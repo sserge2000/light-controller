@@ -18,11 +18,51 @@ extern char* pswd;
 BlynkTimer timer;
 WidgetRTC rtc;
 
+#define RELAY_PIN 13
+WidgetLED relayLed(V10);
+
 long startTime;
 long stopTime;
 
+#define CM_OFF 1
+#define CM_ON 2
+#define CM_AUTO 3
+#define CS_OFF 0
+#define CS_ON 1
+
+int controller_mode = CM_OFF;
+int controller_state = CS_OFF;
+
+void controllerTick()
+{
+  switch (controller_mode)
+  {
+    case CM_OFF:
+      controller_state = CS_OFF;
+      break;
+    case CM_ON:
+      controller_state = CS_ON;
+      break;
+    case CM_AUTO:
+      long currentTime = second() + 60*minute() + 60*60*hour();
+      if (startTime <= currentTime && currentTime <= stopTime)
+        controller_state = CS_ON;
+      else
+        controller_state = CS_OFF;
+      break;
+  }
+  digitalWrite(RELAY_PIN, controller_state);
+  if (CS_ON==controller_state)
+    relayLed.on();
+   else
+    relayLed.off();
+}
+
 void setup()
 {
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
+
   // Debug console
   Serial.begin(115200);
   initLedUi(&timer);
@@ -33,6 +73,7 @@ void setup()
   Blynk.begin(auth, ssid, pswd);
   setSyncInterval(10 * 60); // Sync interval in seconds (10 minutes)
   setLedUiState(LED_UI_OK);
+  timer.setInterval(1000, controllerTick);
 }
 
 void loop()
@@ -41,11 +82,11 @@ void loop()
   timer.run();
 }
 
-BLYNK_WRITE(V0)
-{   
-  int value = param.asInt(); // Get value as integer
-  setLedUiState(value-1);
-}
+//BLYNK_WRITE(V0)
+//{   
+//  int value = param.asInt(); // Get value as integer
+//  setLedUiState(value-1);
+//}
 
 BLYNK_CONNECTED() {
   // Synchronize time on connection
@@ -61,5 +102,11 @@ BLYNK_WRITE(V1)
   Serial.println(startTime);
   Serial.print("Stop: ");
   Serial.println(stopTime);
+}
+
+BLYNK_WRITE(V2)
+{   
+  controller_mode = param.asInt();
+  controllerTick(); 
 }
 
