@@ -66,13 +66,16 @@ void setup()
   // Debug console
   Serial.begin(115200);
   initLedUi(&timer);
+  setLedUiState(LED_UI_OK);
+
   //setLedUiState(LED_UI_CONNECTING);
   //if (init_ssid() != 0);
   //     setLedUiState(LED_UI_ERROR);
   init_ssid();
   Blynk.begin(auth, ssid, pswd);
   setSyncInterval(10 * 60); // Sync interval in seconds (10 minutes)
-  setLedUiState(LED_UI_OK);
+  //setLedUiState(LED_UI_OK);
+  setLedUiState(LED_UI_CONNECTING);
   timer.setInterval(1000, controllerTick);
 }
 
