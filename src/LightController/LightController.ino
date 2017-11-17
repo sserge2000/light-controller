@@ -1,10 +1,13 @@
 #define BLYNK_PRINT Serial
 
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
 
-//#include <BlynkSimpleEsp8266.h>
-#include <WiFi.h>
-#include <WiFiClient.h>
-#include <BlynkSimpleEsp32.h>
+//#include <WiFi.h>
+//#include <BlynkSimpleEsp32.h>
+
+//#include <WiFiClient.h>
+
 #include <TimeLib.h>
 #include <WidgetRTC.h>
 
