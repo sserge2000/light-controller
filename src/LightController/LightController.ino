@@ -37,6 +37,8 @@ long stopTime;
 int controller_mode = CM_OFF;
 int controller_state = CS_OFF;
 
+boolean connectionWasAlive = false;
+
 void controllerTick()
 {
   switch (controller_mode)
@@ -62,6 +64,8 @@ void controllerTick()
     relayLed.off();
 }
 
+
+
 void setup()
 {
   pinMode(RELAY_PIN, OUTPUT);
@@ -76,16 +80,36 @@ void setup()
   //if (init_ssid() != 0);
   //     setLedUiState(LED_UI_ERROR);
   init_ssid();
-  Blynk.begin(auth, ssid, pswd);
+  WiFi.begin(ssid,pswd);
+  Blynk.config(auth);
+
+  
+//  Blynk.begin(auth, ssid, pswd);
   setSyncInterval(10 * 60); // Sync interval in seconds (10 minutes)
   //setLedUiState(LED_UI_OK);
-  setLedUiState(LED_UI_CONNECTING);
+  //setLedUiState(LED_UI_CONNECTING);
+  setLedUiState(LED_UI_ERROR);
   timer.setInterval(1000, controllerTick);
 }
 
 void loop()
 {
-  Blynk.run();
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    if (!connectionWasAlive)
+    {
+      connectionWasAlive = true;
+      setLedUiState(LED_UI_CONNECTING);
+    }
+    Blynk.run();
+  }
+  else
+    if (connectionWasAlive)
+    {
+      connectionWasAlive = false;
+      setLedUiState(LED_UI_ERROR);
+    }
+  
   timer.run();
 }
 
