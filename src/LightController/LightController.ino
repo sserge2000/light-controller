@@ -8,10 +8,11 @@
 #include <TimeLib.h>
 #include <WidgetRTC.h>
 
+#include "creds.h"
 #include "SSID_Select.h"
 #include "ledUi.h"
 
-char auth[] = "c43af642e7ed4a738bbfd80869b4434f";
+char auth[] = BLYNK_AUTH;
 extern char* ssid;
 extern char* pswd;
 
