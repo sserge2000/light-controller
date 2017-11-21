@@ -18,7 +18,7 @@
 char auth[] = BLYNK_AUTH;
 extern char* ssid;
 extern char* pswd;
-#define BLYNK_CHECK_INTERVAL 15000 //15sec
+#define BLYNK_CHECK_INTERVAL 25000 //25sec
 
 BlynkTimer timer;
 WidgetRTC rtc;
@@ -39,6 +39,7 @@ int controller_mode = CM_ON;
 int controller_state = CS_ON; //Relay is started in connected state
 
 boolean connectionWasAlive = false;
+boolean firstTryAfterWiFiConnected = true;
 
 void controllerTick()
 {
@@ -107,12 +108,22 @@ void loop()
     Blynk.run();
   }
   else
+  {
     if (connectionWasAlive)
     {
       connectionWasAlive = false;
       setLedUiState(LED_UI_FAST_BLINK);
     }
-  
+    if (firstTryAfterWiFiConnected && (WiFi.status() == WL_CONNECTED))
+    {
+      firstTryAfterWiFiConnected = false;
+      checkBlynk();
+    }
+    if (WiFi.status() != WL_CONNECTED)
+    {
+      firstTryAfterWiFiConnected = true;
+    }
+  }
   timer.run();
 }
 
