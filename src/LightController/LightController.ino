@@ -31,11 +31,11 @@ long stopTime;
 #define CM_OFF 1
 #define CM_ON 2
 #define CM_AUTO 3
-#define CS_OFF 0
-#define CS_ON 1
+#define CS_OFF 1 //relay is normally connected
+#define CS_ON 0 // to disconnect, we write HIGH to RELAY_PIN
 
-int controller_mode = CM_OFF;
-int controller_state = CS_OFF;
+int controller_mode = CM_ON;
+int controller_state = CS_ON; //Relay is started in connected state
 
 boolean connectionWasAlive = false;
 

@@ -27,6 +27,8 @@ int select_ssid(const char* ssid_to_check)
         return 1;
     else if (check_ssid(ssid_to_check, SSID2, PSWD2))
         return 1;
+    else if (check_ssid(ssid_to_check, SSID3, PSWD3))
+        return 1;
     else
         return 0;
 }
