@@ -18,6 +18,7 @@
 char auth[] = BLYNK_AUTH;
 extern char* ssid;
 extern char* pswd;
+#define BLYNK_CHECK_INTERVAL 15000 //15sec
 
 BlynkTimer timer;
 WidgetRTC rtc;
@@ -64,37 +65,39 @@ void controllerTick()
     relayLed.off();
 }
 
-
+void checkBlynk()
+{
+  if (WiFi.status() == WL_CONNECTED)  
+    {
+      if(!Blynk.connected())
+      {
+        Blynk.connect();  
+      }
+    }
+}
 
 void setup()
 {
   pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(RELAY_PIN, LOW);
 
-  // Debug console
   Serial.begin(115200);
   initLedUi(&timer);
   setLedUiState(LED_UI_OK);
 
-  //setLedUiState(LED_UI_CONNECTING);
-  //if (init_ssid() != 0);
-  //     setLedUiState(LED_UI_ERROR);
   init_ssid();
   WiFi.begin(ssid,pswd);
   Blynk.config(auth);
-
   
-//  Blynk.begin(auth, ssid, pswd);
-  setSyncInterval(10 * 60); // Sync interval in seconds (10 minutes)
-  //setLedUiState(LED_UI_OK);
-  //setLedUiState(LED_UI_CONNECTING);
+  setSyncInterval(10 * 60); // RTC Sync interval in seconds (10 minutes)
   setLedUiState(LED_UI_ERROR);
   timer.setInterval(1000, controllerTick);
+  timer.setInterval(BLYNK_CHECK_INTERVAL, checkBlynk);
 }
 
 void loop()
 {
-  if (WiFi.status() == WL_CONNECTED)
+  if (Blynk.connected())
   {
     if (!connectionWasAlive)
     {
@@ -112,12 +115,6 @@ void loop()
   
   timer.run();
 }
-
-//BLYNK_WRITE(V0)
-//{   
-//  int value = param.asInt(); // Get value as integer
-//  setLedUiState(value-1);
-//}
 
 BLYNK_CONNECTED() {
   // Synchronize time on connection
