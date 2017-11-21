@@ -71,7 +71,7 @@ void checkBlynk()
     {
       if(!Blynk.connected())
       {
-        Blynk.connect();  
+        Blynk.connect(); 
       }
     }
 }
@@ -83,14 +83,14 @@ void setup()
 
   Serial.begin(115200);
   initLedUi(&timer);
-  setLedUiState(LED_UI_OK);
+  setLedUiState(LED_UI_ON);
 
   init_ssid();
   WiFi.begin(ssid,pswd);
   Blynk.config(auth);
   
   setSyncInterval(10 * 60); // RTC Sync interval in seconds (10 minutes)
-  setLedUiState(LED_UI_ERROR);
+  setLedUiState(LED_UI_FAST_BLINK);
   timer.setInterval(1000, controllerTick);
   timer.setInterval(BLYNK_CHECK_INTERVAL, checkBlynk);
 }
@@ -102,7 +102,7 @@ void loop()
     if (!connectionWasAlive)
     {
       connectionWasAlive = true;
-      setLedUiState(LED_UI_CONNECTING);
+      setLedUiState(LED_UI_SLOW_BLINK);
     }
     Blynk.run();
   }
@@ -110,7 +110,7 @@ void loop()
     if (connectionWasAlive)
     {
       connectionWasAlive = false;
-      setLedUiState(LED_UI_ERROR);
+      setLedUiState(LED_UI_FAST_BLINK);
     }
   
   timer.run();

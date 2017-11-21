@@ -1,11 +1,11 @@
 #define LED_UI_PIN 12
 #define LED_UI_OFF 0
-#define LED_UI_OK 1
-#define LED_UI_CONNECTING 2
-#define LED_UI_ERROR 3
+#define LED_UI_ON 1
+#define LED_UI_SLOW_BLINK 2
+#define LED_UI_FAST_BLINK 3
 
-#define LED_UI_CONNECTING_BLINK_PERIOD 500
-#define LED_UI_ERROR_BLINK_PERIOD 250
+#define LED_UI_SLOW_BLINK_BLINK_PERIOD 500
+#define LED_UI_FAST_BLINK_BLINK_PERIOD 150
 
 BlynkTimer* timer_h;
 
@@ -38,16 +38,16 @@ void setLedUiState(int state)
     case LED_UI_OFF:
       digitalWrite(LED_UI_PIN, LOW);
       break;
-    case LED_UI_OK:
+    case LED_UI_ON:
       digitalWrite(LED_UI_PIN, HIGH);
       break;
-    case LED_UI_CONNECTING:
+    case LED_UI_SLOW_BLINK:
       digitalWrite(LED_UI_PIN, HIGH);
-      ledUiTimerID = timer_h->setInterval(LED_UI_CONNECTING_BLINK_PERIOD, ledUiTimerTask);
+      ledUiTimerID = timer_h->setInterval(LED_UI_SLOW_BLINK_BLINK_PERIOD, ledUiTimerTask);
       break;
-    case LED_UI_ERROR:
+    case LED_UI_FAST_BLINK:
       digitalWrite(LED_UI_PIN, HIGH);
-      ledUiTimerID = timer_h->setInterval(LED_UI_ERROR_BLINK_PERIOD, ledUiTimerTask);
+      ledUiTimerID = timer_h->setInterval(LED_UI_FAST_BLINK_BLINK_PERIOD, ledUiTimerTask);
       break;
  }
 }
